@@ -1,0 +1,10 @@
+backend==0.2.4.1
+joblib==1.4.2
+numpy==2.2.5
+openai==1.75.0
+pandas==2.2.3
+pydantic==2.11.3
+python-dotenv==1.1.0
+scikit_learn==1.6.1
+streamlit==1.44.1
+snowflake-connector-python==3.14.1
