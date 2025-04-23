@@ -23,7 +23,7 @@ if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.chat_message("assistant"):
-        response = run_agent_pipeline(prompt)
+        plan, response = run_agent_pipeline(prompt)
         st.markdown(response)
 
     st.session_state.messages.append({"role": "assistant", "content": response})

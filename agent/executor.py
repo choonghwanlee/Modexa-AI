@@ -6,7 +6,7 @@ from agent.context_history import ContextHistory
 import streamlit as st
 
 class ReActPlanExecutor:
-    def __init__(self, tool_specs, tool_mapper, llm: LLMWrapper, max_retries: int = 5):
+    def __init__(self, tool_specs, tool_mapper, llm: LLMWrapper, use_ui= True, max_retries: int = 5):
         self.tools = tool_specs                # Toolset for actions (e.g., sql_tool, ml_tool, plot_tool)
         self.tool_mapper = tool_mapper          # Maps tool names to functions
         self.llm = llm                    # LLM interface
@@ -14,6 +14,7 @@ class ReActPlanExecutor:
         self.scratchpad = Scratchpad()             # Volatile working memory
         self.current_step_index = 0      # Pointer to step in the plan
         self.max_tries = max_retries      # Max retries for each step
+        self.use_ui = use_ui
 
     def reset(self):
         self.context_history.clear()
@@ -29,10 +30,10 @@ class ReActPlanExecutor:
             status = None
 
             try:
-                # ✅ Use st.status directly here
-                status = st.status(step_label, state="running", expanded=True)
-                self.status_items.append(status)
-                status.write(f"**Step {self.current_step_index + 1}:** {step}")
+                if self.use_ui:
+                    status = st.status(step_label, state="running", expanded=True)
+                    self.status_items.append(status)
+                    status.write(f"**Step {self.current_step_index + 1}:** {step}")
 
                 print(f"\n--- Step {self.current_step_index + 1}: {step} ---")
                 self.execute_step(step, question)
@@ -40,16 +41,17 @@ class ReActPlanExecutor:
                 latest_entry = self.context_history.entries[-1]["trace"]
                 if latest_entry:
                     last = latest_entry[-1]
-                    status.write(f"- **Thought:** {last.get('thought', '')}")
-                    status.write(f"- **Action:** {last.get('action', '')}")
-                    status.write(f"- **Observation:** {last.get('observation', '')}")
-
-                status.update(label=f"✅ Completed: {step}", state="complete", expanded=False)
+                    if self.use_ui and status:
+                        status.write(f"- **Thought:** {last.get('thought', '')}")
+                        status.write(f"- **Action:** {last.get('action', '')}")
+                        status.write(f"- **Observation:** {last.get('observation', '')}")
+                if self.use_ui and status:
+                    status.update(label=f"✅ Completed: {step}", state="complete", expanded=False)
 
             except Exception as e:
                 error_msg = f"❌ Step failed due to: {str(e)}"
                 print(error_msg)
-                if status:
+                if self.use_ui and status:
                     status.write(f"**Error:** {str(e)}")
                     status.update(label=error_msg, state="error", expanded=True)
                 break

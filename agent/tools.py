@@ -76,12 +76,15 @@ def convert_text_to_sql(text: str):
 
 
 # Main prediction function
-def predict_clv_for_users(user_ids: pd.DataFrame, model_path="./models/future_clv_model.joblib"):
+def predict_clv_for_users(user_ids: pd.DataFrame, model_path=None):
+    if model_path is None:
+        # Resolve project root dynamically (2 levels up from this file)
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        model_path = os.path.join(project_root, "models", "future_clv_model.joblib")
+
     conn = tool_utils.connect_to_snowflake()
     try:
         user_data = tool_utils.fetch_user_data(user_ids, conn)
-        print("Length of all fetched users: ", len(user_data))
-        print("Datatype: ", type(user_data))
         features = tool_utils.generate_clv_features(user_data)
 
 
@@ -99,7 +102,12 @@ def predict_clv_for_users(user_ids: pd.DataFrame, model_path="./models/future_cl
 
 
 # Main prediction function
-def predict_churn_for_users(user_ids: pd.DataFrame, model_path="./models/churn_model.joblib"):
+def predict_churn_for_users(user_ids: pd.DataFrame, model_path=None):
+    if model_path is None:
+        # Resolve project root dynamically (2 levels up from this file)
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        model_path = os.path.join(project_root, "models", "churn_model.joblib")
+
     conn = tool_utils.connect_to_snowflake()
     try:
         user_data = tool_utils.fetch_user_data(user_ids, conn)
