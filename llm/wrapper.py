@@ -89,7 +89,7 @@ class LLMWrapper:
             "% Task:\nFor the given business question, generate a step-by-step plan for the data and tools to use for the task. This plan should involve individual tasks, that if executed correctly, will generate the information you need to answer the question. Do not add any superfluous steps, and prioritize being as concise as possible. This includes minimizing calls to `write_python_code` and fetching and manipulating data mostly via `convert_text_to_sql`. Make sure the each step in the plan is grounded in the tools and data we are provided with – do not make up new models or columns.\n\n"
             f"% Tools:\n{self._summarize_toolspecs(self.tool_specs)}\n\n"
             f"% Database:\n{dbschema_str}"
-            "% Output Format:\nThink step by step about how to break down the question into smaller tasks. Finally, generate a numbered list for each step in the plan under a ## Final Plan header. Make sure each step is in one line. Include a final step to make sure the final output variable is in a presentable format (code/markdown or table, graph)"
+            "% Output Format:\nThink step by step about how to break down the question into smaller tasks. Finally, generate a numbered list for each step in the plan under a ## Final Plan header. Make sure each step is in one line."
         )
         if context:
             prompt += f"Additional Context:\n{context}\n\n"
