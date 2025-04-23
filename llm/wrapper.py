@@ -194,7 +194,6 @@ class LLMWrapper:
         ) 
 
         response = self._call_llm(prompt)
-        print(response)
 
         return "yes" in response.lower()[:10]
 
